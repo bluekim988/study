@@ -13,11 +13,9 @@ public class Test01 {
 		
 		showBoardInfo();
 	}
-	
 	public void showBoardInfo() {
 		BoardDAO dao = new BoardDAO();
-		BoardDTO board = new BoardDTO();
-		board = dao.selectBoard("방명록");
+		BoardDTO board = dao.selectBoard("방명록");
 		
 		System.out.println(board.getBno());
 		System.out.println(board.getBname());
