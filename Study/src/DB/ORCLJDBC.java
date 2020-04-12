@@ -52,6 +52,9 @@ public class ORCLJDBC {
 		return con;
 	}
 	
+	/*
+	 	getCon() 통해 받아온 Connection 객체를 기반으로 Statement를 반환해준다.
+	 */
 	public Statement getStatement() {
 		try {
 			stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -61,6 +64,9 @@ public class ORCLJDBC {
 		return stmt;
 	}
 	
+	/*
+ 	getCon() 통해 받아온 Connection 객체를 기반으로 PreparedStatement를 반환해준다.
+ */
 	public PreparedStatement getPreparedStatement(String sql) {
 		try {
 			pstmt = con.prepareStatement(sql ,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

@@ -3,13 +3,15 @@ package DTO;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ReplyDTO {
+public class ReplyDTO implements Comparable<ReplyDTO> {
 	private int rno;
 	private String writer;
 	private Date crdateOri;
 	private String crdate;
 	private int textno;
 	private String text;
+	private String isShow;
+	
 	public int getRno() {
 		return rno;
 	}
@@ -49,7 +51,16 @@ public class ReplyDTO {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
-	
+	public String getIsShow() {
+		return isShow;
+	}
+	public void setIsShow(String isShow) {
+		this.isShow = isShow;
+	}
+
+	@Override
+	public int compareTo(ReplyDTO o) {
+		return this.rno - o.rno;
+	}
 
 }
