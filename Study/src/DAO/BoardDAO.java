@@ -170,6 +170,9 @@ public class BoardDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(pstmt);
+			db.close(con);
 		}
 		return board;
 	}

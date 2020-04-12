@@ -169,6 +169,9 @@ public class TextDAO {
 			return result;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(pstmt);
+			db.close(con);
 		}
 		
 		return 0;
@@ -191,6 +194,9 @@ public class TextDAO {
 			return result;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(pstmt);
+			db.close(con);
 		}
 		
 		return 0;
@@ -223,6 +229,9 @@ public class TextDAO {
 			return set;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(stmt);
+			db.close(con);
 		}
 		
 		return set;
@@ -254,6 +263,9 @@ public class TextDAO {
 			return text;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(pstmt);
+			db.close(con);
 		}
 		return text;
 	}

@@ -151,6 +151,9 @@ public class ReplyDAO {
 			return set;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			db.close(pstmt);
+			db.close(con);
 		}
 		return set;
 	}
