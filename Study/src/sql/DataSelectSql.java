@@ -23,9 +23,9 @@ public class DataSelectSql {
 		StringBuffer sql = new StringBuffer();
 		switch (code) {
 		case SELECT_TEXT_FOR_NAV:
-			sql.append("SELECT tno, title, writer, crdate, tcount, tlike");
+			sql.append("SELECT tno, title, writer, crdate, tcount, tlike ");
 			sql.append("FROM text ");
-			sql.append("WHERE isShow = 'Y' ");
+			sql.append("WHERE isShow = 'Y' AND bno = ? ");
 			break;
 		case SELECT_TEXT_FOR_IN:
 			sql.append("SELECT tno, title, writer, crdate, tcount, tlike, text");

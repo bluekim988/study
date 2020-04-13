@@ -1,5 +1,6 @@
 package DTO;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,6 +9,7 @@ public class TextDTO implements Comparable<TextDTO>{
 	private String title;
 	private String writer;
 	private Date crdateOri;
+	private Time crtimeOri;
 	private String crdate;
 	private int count;
 	private int like;
@@ -38,9 +40,11 @@ public class TextDTO implements Comparable<TextDTO>{
 	}
 	public void setCrdateOri(Date crdateOri) {
 		this.crdateOri = crdateOri;
-		String str = "yyyy/MM/dd HH:mm";
+		String str = "yyyy/MM/dd ";
+		String str2 = "HH:mm";
 		SimpleDateFormat form1 = new SimpleDateFormat(str);
-		crdate = form1.format(crdateOri);
+		SimpleDateFormat form2 = new SimpleDateFormat(str2);
+		crdate = form1.format(crdateOri) + form2.format(crtimeOri);
 		
 	}
 	public String getCrdate() {
@@ -80,9 +84,16 @@ public class TextDTO implements Comparable<TextDTO>{
 		this.isShow = isShow;
 	}
 	
+	
+	public Time getCrtimeOri() {
+		return crtimeOri;
+	}
+	public void setCrtimeOri(Time crtimeOri) {
+		this.crtimeOri = crtimeOri;
+	}
 	@Override
 	public int compareTo(TextDTO o) {
-		return this.tno - o.tno;
+		return o.tno - this.tno ;
 	}
 	
 }

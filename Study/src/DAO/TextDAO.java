@@ -207,30 +207,32 @@ public class TextDAO {
 	 * 가져온 데이터는 TextDTO객체형태로 가공한뒤,
 	 * TreeSet<TextDTO> 타입으로 반환한다.
 	 */
-	public TreeSet<TextDTO> selectTextForNav() {
+	public TreeSet<TextDTO> selectTextForMain(int bno) {
 		TreeSet<TextDTO> set = new TreeSet<TextDTO>();
 		con = db.getCon();
 		selectSql = new DataSelectSql();
 		String sql = selectSql.getSelectSql(selectSql.SELECT_TEXT_FOR_NAV);
-		stmt = db.getStatement();
+		pstmt = db.getPreparedStatement(sql);
 		try {
-			rs = stmt.executeQuery(sql);
+			pstmt.setInt(1, bno);
+			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				TextDTO text = new TextDTO();
 				text.setTno(rs.getInt("tno"));
 				text.setTitle(rs.getString("title"));
 				text.setWriter(rs.getString("writer"));
+				text.setCrtimeOri(rs.getTime("crdate"));
 				text.setCrdateOri(rs.getDate("crdate"));
-				text.setCount(rs.getInt("count"));
-				text.setLike(rs.getInt("like"));
+				text.setCount(rs.getInt("tcount"));
+				text.setLike(rs.getInt("tlike"));
 				set.add(text);
 			}
 			return set;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			db.close(stmt);
+			db.close(pstmt);
 			db.close(con);
 		}
 		
