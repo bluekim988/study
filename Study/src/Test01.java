@@ -20,7 +20,7 @@ public class Test01 {
 	}
 	public void selectText() {
 		TextDAO dao = new TextDAO();
-		TreeSet<TextDTO> set = dao.selectTextForMain(11);
+		TreeSet<TextDTO> set = dao.selectTextForMain("¹æ¸í·Ï");
 		
 		Iterator<TextDTO> itr = set.iterator();
 		while(itr.hasNext()) {

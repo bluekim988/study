@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.TreeSet;
 
 import DB.ORCLJDBC;
 import DTO.BoardDTO;
-import sql.*;
+import sql.DataAddSql;
+import sql.DataDropSql;
+import sql.DataEditSql;
+import sql.DataSelectSql;
 
 /**
  * 
@@ -26,6 +30,7 @@ public class BoardDAO {
 	DataAddSql addSql;
 	DataEditSql editSql;
 	DataSelectSql selectSql;
+	DataDropSql dropSql;
 	
 	Connection con;
 	Statement stmt;
@@ -175,6 +180,48 @@ public class BoardDAO {
 			db.close(con);
 		}
 		return board;
+	}
+	
+	public TreeSet<BoardDTO> selectBoardAll() {
+		TreeSet<BoardDTO> data = new TreeSet<BoardDTO>();
+		con = db.getCon();
+		selectSql = new DataSelectSql();
+		String sql = selectSql.getSelectSql(selectSql.SELECT_BOARD_ALL);
+		stmt = db.getStatement();
+		try {
+			rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				BoardDTO inst = new BoardDTO();
+				inst.setBno(rs.getInt("bno"));
+				inst.setBname(rs.getString("bname"));
+				inst.setbInfo(rs.getString("binfo"));
+				data.add(inst);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.close(stmt);
+			db.close(con);
+		}
+		return data;
+	}
+	
+	public int dropBoard(String bname) {
+		int result = 0;
+		con = db.getCon();
+		dropSql = new DataDropSql();
+		String sql = dropSql.getDropSql(dropSql.DROP_BOARD);
+		pstmt = db.getPreparedStatement(sql);
+		try {
+			pstmt.setString(1, bname);
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.close(pstmt);
+			db.close(con);
+		}
+		return result;
 	}
 }
 

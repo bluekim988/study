@@ -12,13 +12,16 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,13 +32,13 @@ import DTO.TextDTO;
 import oracle.jdbc.proxy.annotation.GetCreator;
 
 public class MyBoard extends JFrame implements ActionListener, MouseListener{
-	JFrame wt;
+	JFrame wt, showT;
 	JPanel list1, list2, list3;
 	JPanel pp ;
-	JButton write, submit, close;
+	JButton write, submit, close, crBoard;
 	JLabel list1_item, list2_item, list3_item, l1, l2;
 	JPanel pmain ;
-	JTable table;
+	JTable table1, table2, table3;
 	Vector value;
 	Vector<String> nav;
 	String[] nav1 = {"글번호", "제목", "작성자", "작성일", "조회수", "좋아요"};
@@ -73,9 +76,9 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		list1_item.setBounds(20, 0, 60, 20);
 		list2_item.setBounds(15, 0, 60, 20);
 		list3_item.setBounds(15, 0, 60, 20);
-		list1_item.setFont(new Font("고딕", Font.BOLD, 12));
-		list2_item.setFont(new Font("고딕", Font.BOLD, 12));
-		list3_item.setFont(new Font("고딕", Font.BOLD, 12));
+		list1_item.setFont(new Font("고딕", Font.BOLD, 15));
+		list2_item.setFont(new Font("고딕", Font.BOLD, 15));
+		list3_item.setFont(new Font("고딕", Font.BOLD, 15));
 		list1.add(list1_item);
 		list2.add(list2_item);
 		list3.add(list3_item);
@@ -102,8 +105,15 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		pp.add(l2);
 		
 		write = new JButton("글쓰기");
+		write.setBorderPainted(false);
+		write.setBackground(new Color(132, 227, 157));
 		write.setBounds(750, 160, 80, 40);
 		
+		
+		crBoard = new JButton("new게시판");
+		crBoard.setBorderPainted(false);
+		crBoard.setBackground(new Color(132, 227, 157));
+		crBoard.setBounds(740, 100, 100, 40);
 		
 		
 		// 게시물 목록 표시 구역
@@ -113,6 +123,31 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 //		pmain.setBorder(new LineBorder(new Color(66, 135, 245)));
 
 		// 네브 목록 벡터
+//		nav = new Vector<String>();
+//		nav.add("글번호");
+//		nav.add("제목");
+//		nav.add("작성자");
+//		nav.add("작성일");
+//		nav.add("조회수");
+//		nav.add("좋아요");
+		
+		BoardDAO dao = new BoardDAO();
+		String name = list1_item.getText();
+		
+		BoardDTO board = dao.selectBoard(name);
+
+		l1.setText(board.getBname());
+		l2.setText(board.getbInfo());
+		// 게시글 목록 저장한 벡터
+//		value = new Vector();
+//		
+//		model = new DefaultTableModel(value, nav);
+//		table = new JTable(model);
+//		jsc = new JScrollPane(table);
+//		jsc.setBounds(50, 230, 780, 700);
+//		pmain.add(table);
+		
+		TextDAO tdao = new TextDAO();
 		nav = new Vector<String>();
 		nav.add("글번호");
 		nav.add("제목");
@@ -122,12 +157,24 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		nav.add("좋아요");
 		// 게시글 목록 저장한 벡터
 		value = new Vector();
-		
+		TreeSet<TextDTO> set = tdao.selectTextForMain("방명록");
+		Iterator<TextDTO> itr = set.iterator();
+		while(itr.hasNext()) {
+			TextDTO inst = itr.next();
+			Vector<String> info = new Vector<String>();
+			info.add(inst.getTno()+"");
+			info.add(inst.getTitle());
+			info.add(inst.getWriter());
+			info.add(inst.getCrdate());
+			info.add(inst.getCount()+"");
+			info.add(inst.getLike()+"");
+			value.add(info);
+		}
 		model = new DefaultTableModel(value, nav);
-		table = new JTable(model);
-		jsc = new JScrollPane(table);
+		table1 = new JTable(model);
+		table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsc = new JScrollPane(table1);
 		jsc.setBounds(50, 230, 780, 700);
-//		pmain.add(table);
 
 //		add(p1);
 		add(list1);
@@ -136,6 +183,7 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		add(pp);
 		add(jsc);
 		add(write);
+		add(crBoard);
 		
 		
 		
@@ -144,6 +192,11 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		list2.addMouseListener(this);
 		list3.addMouseListener(this);
 		write.addActionListener(this);
+		crBoard.addActionListener(this);
+		
+		table1.addMouseListener(this);
+//		table2.addMouseListener(this);
+//		table3.addMouseListener(this);
 
 		
 	}
@@ -189,16 +242,10 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 	
 	public void setList1() {
 		TextDAO tdao = new TextDAO();
-		nav = new Vector<String>();
-		nav.add("글번호");
-		nav.add("제목");
-		nav.add("작성자");
-		nav.add("작성일");
-		nav.add("조회수");
-		nav.add("좋아요");
+
 		// 게시글 목록 저장한 벡터
 		value = new Vector();
-		TreeSet<TextDTO> set = tdao.selectTextForMain(11);
+		TreeSet<TextDTO> set = tdao.selectTextForMain("방명록");
 		Iterator<TextDTO> itr = set.iterator();
 		while(itr.hasNext()) {
 			TextDTO inst = itr.next();
@@ -207,30 +254,25 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 			info.add(inst.getTitle());
 			info.add(inst.getWriter());
 			info.add(inst.getCrdate());
-			System.out.println(inst.getCrdate());
 			info.add(inst.getCount()+"");
 			info.add(inst.getLike()+"");
 			value.add(info);
 		}
 		model = new DefaultTableModel(value, nav);
-		table = new JTable(model);
-		jsc = new JScrollPane(table);
+		table1 = new JTable(model);
+		table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsc = new JScrollPane(table1);
 		jsc.setBounds(50, 230, 780, 700);
 		add(jsc);
+
 	}
 	
 	public void setList2() {
 		TextDAO tdao = new TextDAO();
-		nav = new Vector<String>();
-		nav.add("글번호");
-		nav.add("제목");
-		nav.add("작성자");
-		nav.add("작성일");
-		nav.add("조회수");
-		nav.add("좋아요");
+
 		// 게시글 목록 저장한 벡터
 		value = new Vector();
-		TreeSet<TextDTO> set = tdao.selectTextForMain(12);
+		TreeSet<TextDTO> set = tdao.selectTextForMain("자료공유");
 		Iterator<TextDTO> itr = set.iterator();
 		while(itr.hasNext()) {
 			TextDTO inst = itr.next();
@@ -244,24 +286,19 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 			value.add(info);
 		}
 		model = new DefaultTableModel(value, nav);
-		table = new JTable(model);
-		jsc = new JScrollPane(table);
+		table2 = new JTable(model);
+		table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsc = new JScrollPane(table2);
 		jsc.setBounds(50, 230, 780, 700);
 		add(jsc);
 	}
 	
 	public void setList3() {
 		TextDAO tdao = new TextDAO();
-		nav = new Vector<String>();
-		nav.add("글번호");
-		nav.add("제목");
-		nav.add("작성자");
-		nav.add("작성일");
-		nav.add("조회수");
-		nav.add("좋아요");
+
 		// 게시글 목록 저장한 벡터
 		value = new Vector();
-		TreeSet<TextDTO> set = tdao.selectTextForMain(13);
+		TreeSet<TextDTO> set = tdao.selectTextForMain("대화나눔");
 		Iterator<TextDTO> itr = set.iterator();
 		while(itr.hasNext()) {
 			TextDTO inst = itr.next();
@@ -275,8 +312,9 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 			value.add(info);
 		}
 		model = new DefaultTableModel(value, nav);
-		table = new JTable(model);
-		jsc = new JScrollPane(table);
+		table3 = new JTable(model);
+		table3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jsc = new JScrollPane(table3);
 		jsc.setBounds(50, 230, 780, 700);
 		add(jsc);
 	}
@@ -357,7 +395,40 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 		dao.createText(inst);
 	}
 	
+	
+	/*
+	 * new게시판 버튼 이벤트 처리
+	 */
+	public void createBoard() {
+		String bname = JOptionPane.showInputDialog("게시판 이름 : ");
+		String bInfo = JOptionPane.showInputDialog("게시판 소개 : ");
+		
+		BoardDTO b1 = new BoardDTO();
+		b1.setBname(bname);
+		b1.setbInfo(bInfo);
+		BoardDAO dao = new BoardDAO();
+		int result = dao.createBoard(b1);
+		String str = "생성 실패";
+		if(result >0) {
+			str = "생성 완료";
+		}
+		JOptionPane.showMessageDialog(null, str);		
+	}
+	
+	// 게시글 불러오기 이벤트 처리 
+	public void showText(Object value) {
+		showT = new JFrame();
+		showT.setBounds(500, 50, 700, 900);
+		showT.setLayout(null);
+//		showT.setVisible(true);
+		String st = value.toString();
+		int tno = Integer.parseInt(st);
+		TextDAO dao = new TextDAO();
+		TextDTO data = dao.selectTextForIn(tno);
+		JOptionPane.showMessageDialog(null, data.getText());
+		
 
+	}
 	
 	/*
 	 * 메인함수
@@ -382,6 +453,8 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 			wt.dispose();		
 		} else if(btn == close) {
 			wt.dispose();
+		} else if(btn == crBoard) {
+			createBoard();
 		}
 		
 	}
@@ -403,45 +476,58 @@ public class MyBoard extends JFrame implements ActionListener, MouseListener{
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
-		JPanel eve = (JPanel)e.getSource();
-		
-		if(eve == list1) {
-			list1.setBackground(null);		
-		} if(eve == list2) {
-			list2.setBackground(null);			
-		} else if(eve == list3) {
-			list3.setBackground(null);			
-		}
+//		JPanel eve = (JPanel)e.getSource();
+//		
+//		if(eve == list1) {
+//			list1.setBackground(null);		
+//		} if(eve == list2) {
+//			list2.setBackground(null);			
+//		} else if(eve == list3) {
+//			list3.setBackground(null);			
+//		}
 	
 	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		JPanel eve = (JPanel)e.getSource();
-		
-		if(eve == list1) {
-			list1.setBackground(new Color(168, 195, 237));		
-		} if(eve == list2) {
-			list2.setBackground(new Color(168, 195, 237));			
-		} else if(eve == list3) {
-			list3.setBackground(new Color(168, 195, 237));			
-		}
-		
+//		JPanel eve = (JPanel)e.getSource();
+//		
+//		if(eve == list1) {
+//			list1.setBackground(new Color(245, 105, 142));		
+//		} if(eve == list2) {
+//			list2.setBackground(new Color(245, 105, 142));			
+//		} else if(eve == list3) {
+//			list3.setBackground(new Color(245, 105, 142));			
+//		}
+//		
 	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		JPanel eve = (JPanel)e.getSource();
+		JComponent eve = (JComponent)e.getSource();
+		JPanel li = null;
+		JTable tb = null;
+		if(eve instanceof JPanel) {
+			li = (JPanel) eve;
+		} else if (eve instanceof JTable) {
+			tb = (JTable)eve;
+		}
 		
-		if(eve == list1) {
+		
+		if(li == list1) {
 			setboard1();
 			setList1();
-		} if(eve == list2) {
+		} else if(li == list2) {
 			setboard2();			
 			setList2();
-		} else if(eve == list3) {
+		} else if(li == list3) {
 			setboard3();			
 			setList3();
+		} else if (tb == table1) {
+			int row = table1.getSelectedRow();
+			int col = table1.getSelectedColumn();
+			Object value = table1.getValueAt(row, col);
+			showText(value);
 		}
 		
 	}

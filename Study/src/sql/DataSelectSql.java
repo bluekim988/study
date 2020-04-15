@@ -17,6 +17,7 @@ public class DataSelectSql {
 	public final int SELECT_TEXT_FOR_IN = 1002;
 	public final int SELECT_REPLY_INCLUDE_TNO = 2001;
 	public final int SELECT_BOARD_THIS = 3001;
+	public final int SELECT_BOARD_ALL = 3002;
 	
 	
 	public String getSelectSql(int code) {
@@ -24,11 +25,11 @@ public class DataSelectSql {
 		switch (code) {
 		case SELECT_TEXT_FOR_NAV:
 			sql.append("SELECT tno, title, writer, crdate, tcount, tlike ");
-			sql.append("FROM text ");
-			sql.append("WHERE isShow = 'Y' AND bno = ? ");
+			sql.append("FROM text t, board b ");
+			sql.append("WHERE t.bno = b.bno AND t.isShow = 'Y' AND bname = ? ");
 			break;
 		case SELECT_TEXT_FOR_IN:
-			sql.append("SELECT tno, title, writer, crdate, tcount, tlike, text");
+			sql.append("SELECT tno, title, writer, crdate, tcount, tlike, text ");
 			sql.append("FROM text ");
 			sql.append("WHERE isShow = 'Y' AND tno = ? ");
 			break;
@@ -41,6 +42,11 @@ public class DataSelectSql {
 			sql.append("SELECT bno, bname, binfo ");
 			sql.append("FROM board ");
 			sql.append("WHERE isShow = 'Y' AND bname = ? ");
+			break;
+		case SELECT_BOARD_ALL:
+			sql.append("SELECT bno, bname, binfo ");
+			sql.append("FROM board ");
+			sql.append("WHERE isShow = 'Y' ");
 			break;
 		}
 		return sql.toString();
