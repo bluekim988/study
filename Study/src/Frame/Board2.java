@@ -68,6 +68,7 @@ public class Board2 implements ActionListener, MouseListener {
 		b1.addMouseListener(this);
 		b2.addMouseListener(this);
 		
+		// 게시판 선택 이벤트 핸들링
 		for(int i=0; i<arr.size(); i++) {
 			arr.get(i).addMouseListener(new SetBoardEvent(this));;
 		}
@@ -89,6 +90,15 @@ public class Board2 implements ActionListener, MouseListener {
 			getBtn(inst.getBname());
 		}
 	}
+	/*
+	 * 버튼 이름 입력시 버튼 생성하여 list에 추가
+	 */
+	public void getBtn(String name) {
+		JButton board = new JButton();
+		board.setText(name);
+		arr.add(board);
+		list.add(board);
+	}
 	
 	/*
 	 * 게시판 생성
@@ -98,6 +108,10 @@ public class Board2 implements ActionListener, MouseListener {
 	public void crBoard() {
 		String bname = JOptionPane.showInputDialog("게시판 이름 : ");
 		String bInfo = JOptionPane.showInputDialog("게시판 소개 : ");
+		String re = JOptionPane.showInputDialog("취소 하시려면 [ N ] 입력!\n계속 진행 하시려면 [ 엔터 ]");
+		if(re.equals("N") || re.equals("n")) {
+			return;
+		}
 		
 		BoardDTO dto = new BoardDTO();
 		dto.setBname(bname);
@@ -107,18 +121,12 @@ public class Board2 implements ActionListener, MouseListener {
 		if(result > 0) {
 			getBtn(bname);
 		}
+		
+//		removeNavBtn();
+//		setBtn();
 		refresh();
 	}
 	
-	/*
-	 * 버튼 이름 입력시 버튼 생성하여 list에 추가
-	 */
-	public void getBtn(String name) {
-		JButton board = new JButton();
-		arr.add(board);
-		board.setText(name);
-		list.add(board);
-	}
 	
 	/*
 	 * 게시판 삭제
@@ -127,13 +135,31 @@ public class Board2 implements ActionListener, MouseListener {
 	 */
 	public void dpBoard() {
 		String bname = JOptionPane.showInputDialog("삭제할 게시판 이름 : ");
-		String re = JOptionPane.showInputDialog("취소 하시려면 [ 'N' ] 입력!");
+		String re = JOptionPane.showInputDialog("취소 하시려면 [ N ] 입력!\n계속 진행 하시려면 [ 엔터 ]");
 		
 		if(re.equals("N") || re.equals("n")) {
 			return;
 		}
 		BoardDAO dao = new BoardDAO();
 		dao.dropBoard(bname);
+		
+		removeListBtn(bname);
+//		setBtn();
+//		refresh();
+	}
+	
+	public void removeListBtn(String bname) {
+		int index = -1;
+		ot:
+		for(int i=0; i<arr.size(); i++) {
+			JButton inst = arr.get(i);
+			if(inst.getText().equals(bname)) {				
+				index = i;
+				break ot;
+			}
+		}
+		
+		list.remove(index);
 		refresh();
 	}
 	
@@ -142,7 +168,7 @@ public class Board2 implements ActionListener, MouseListener {
 	 */
 	public void refresh() {
 		home.dispose();
-		home.setVisible(true);
+		new Board2();
 	}
 	
 	
