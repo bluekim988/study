@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 
 import DAO.BoardDAO;
@@ -28,8 +29,10 @@ public class Board2 implements ActionListener, MouseListener {
 	JButton b1 = new JButton("new 게시판");
 	JButton b2 = new JButton("drop 게시판");
 	public JFrame boardF;
+	public JTable table;
 	
 	ArrayList<JButton> arr = new ArrayList<JButton>();
+
 	
 	public Board2() {
 		
@@ -47,7 +50,7 @@ public class Board2 implements ActionListener, MouseListener {
 		
 		list.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		list.setBounds(0, 50, 800, 120);
-		list.setBorder(new LineBorder(new Color(100, 102, 100)));
+//		list.setBorder(new LineBorder(new Color(100, 102, 100)));
 		
 		
 		// 게시판 리스트 호출
@@ -67,6 +70,10 @@ public class Board2 implements ActionListener, MouseListener {
 		//이벤트 핸들링
 		b1.addMouseListener(this);
 		b2.addMouseListener(this);
+		
+		
+		
+		
 		
 		// 게시판 선택 이벤트 핸들링
 		for(int i=0; i<arr.size(); i++) {

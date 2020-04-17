@@ -1,17 +1,17 @@
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class Test02 {
 	
-	public static void main(String[] args) {
-		System.out.println("");
+	public static void main(String[] args) throws FileNotFoundException  {
+	
+		PrintStream out = new PrintStream("");
+		System.out.println();
+		out.println();
+	
 		
+	
 	}
-
 
 }

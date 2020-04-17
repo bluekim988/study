@@ -1,5 +1,9 @@
 package event;
 
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
@@ -7,12 +11,16 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import DAO.BoardDAO;
@@ -23,9 +31,11 @@ import Frame.Board2;
 
 public class SetBoardEvent implements MouseListener{
 	Board2 b2;
+	JTable t2;
 	
 	public SetBoardEvent(Board2 b) {
 		b2 = b;
+
 	}
 
 	@Override
@@ -64,9 +74,9 @@ public class SetBoardEvent implements MouseListener{
 		b2.boardF.setLayout(null);
 		
 		DefaultTableModel model = new DefaultTableModel(value, nav);
-		JTable table = new JTable(model);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		JScrollPane jsc = new JScrollPane(table);
+		t2 = new JTable(model);
+		t2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane jsc = new JScrollPane(t2);
 		jsc.setBounds(20, 120, 750, 690);
 		
 		
@@ -88,13 +98,168 @@ public class SetBoardEvent implements MouseListener{
 		info.add(l2);
 		
 		
+		// 글쓰기 버튼 생성
+		JButton wtbtn = new JButton("글쓰기");
+		wtbtn.setBounds(650, 50, 80, 30);
 		
 		
+	
 		b2.boardF.add(info);
 		b2.boardF.add(jsc);
+		b2.boardF.add(wtbtn);
 		
 		b2.boardF.setVisible(true);
 		
+		
+		wtbtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame wt = new JFrame();
+				wt.setBounds(500, 50, 700, 900);
+				wt.setLayout(null);
+				
+				JLabel l1 = new JLabel("게시판");
+				l1.setBounds(20, 20, 50, 50);
+				JLabel l2 = new JLabel("제목");
+				l2.setBounds(20, 70, 50, 50);
+				JLabel l3 = new JLabel("닉네임");
+				l3.setBounds(20, 120, 50, 50);
+				
+				String[] blist = {"방명록", "자료공유", "대화나눔"};
+				JComboBox cb = new JComboBox(blist);
+				cb.setBounds(70, 35, 100, 20);	//게시판선택
+				JTextField f1 = new JTextField();
+				f1.setBounds(70, 80, 400, 30);	//제목
+				JTextField f2 = new JTextField();
+				f2.setBounds(70, 130, 200, 30);	//닉네임
+				JTextArea text = new JTextArea();	//본문작성
+				text.setBounds(45, 180, 600, 550);
+				
+				JButton submit = new JButton("저장");
+				submit.setBounds(530, 800, 60, 30);
+				JButton close = new JButton("취소");
+				close.setBounds(600, 800, 60, 30);
+				
+				wt.add(l1);
+				wt.add(l2);
+				wt.add(l3);
+				wt.add(f1);
+				wt.add(f2);
+				wt.add(cb);
+				wt.add(text);
+				wt.add(submit);
+				wt.add(close);
+
+				
+				wt.setVisible(true);
+				
+				
+				submit.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						TextDTO inst = new TextDTO();
+						TextDAO dao = new TextDAO();
+						
+						String title = f1.getText();
+						String writer = f2.getText();
+						String stext = text.getText();
+						int bno = 0;
+						String bd = (String)cb.getSelectedItem();
+						if(bd.equals("방명록")) {
+							bno = 11;
+						} else if(bd.equals("자료공유")) {
+							bno = 12;
+						} else if(bd.equals("대화나눔")) {
+							bno = 13;
+						}
+						
+						inst.setTitle(title);
+						inst.setWriter(writer);
+						inst.setText(stext);
+						inst.setBno(bno);
+						
+						dao.createText(inst);
+						
+						wt.dispose();
+						
+					}
+				});
+				close.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						wt.dispose();
+						
+					}
+				});
+			}
+		});
+		
+		t2.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = t2.getSelectedRow();
+				int col = t2.getSelectedColumn();
+				Object value = t2.getValueAt(row, col);
+				String st = value.toString();
+				int tno = Integer.parseInt(st);
+				TextDAO dao = new TextDAO();
+				TextDTO data = dao.selectTextForIn(tno);
+//				JOptionPane.showMessageDialog(null, data.getText());
+				JFrame textFrame = new JFrame();
+				textFrame.setBounds(500, 50, 800, 900);
+				textFrame.setLayout(null);
+				
+				JPanel p1 = new JPanel();
+				JPanel p2 = new JPanel();
+				p1.setLayout(new GridLayout(3, 1, 10, 10));
+				p1.setBounds(10, 10, 730, 100);
+				p1.add(new JLabel("제목 : " + data.getTitle()));
+				p1.add(new JLabel("글쓴이 : " + data.getWriter()));
+				p1.add(new JLabel("작성일 : " + data.getCrdate()));
+//				p1.setBorder(new LineBorder(new Color(100, 102, 100)));
+				
+				p2.add(new JLabel(data.getText()));
+				p2.setBounds(10, 160, 730, 650);
+//				p2.setBorder(new LineBorder(new Color(100, 102, 100)));
+				
+				textFrame.add(p1);
+				textFrame.add(p2);
+				
+				
+				textFrame.setVisible(true);
+				
+				
+				
+			}
+		});
 		
 	}
 
