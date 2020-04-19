@@ -62,6 +62,7 @@ public class showTextFrame extends MouseAdapter {
 //		p1.setBorder(new LineBorder(new Color(100, 102, 100)));
 
 		JTextArea area = new JTextArea(data.getText());
+		area.setEditable(false);
 		area.setBackground(bgColor);
 		area.setLineWrap(true);
 		area.setSize(720, 640);
