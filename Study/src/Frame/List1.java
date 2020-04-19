@@ -150,8 +150,20 @@ public class List1 extends MouseAdapter {
 		// 글쓰기 버튼 이벤트
 		wtbtn.addActionListener(new WriteBtnFrame());
 
+		// 작성글이 하나도 없을때 처리하기
+		if(plist.size() == 0) {
+			cen1 = new JPanel();
+			cen1.setBackground(Color.white);
+//			cen.setBorder(new LineBorder(Color.gray));
+		cen1.setBounds(10, 110, 566, 750);
+		cen1.setLayout(new GridLayout(10, 1, 0, 10));
+		plist.add(cen1);
+		} else {
+			cen1 = plist.get(0);
+		}
+		
 		// 게시글 10개단위로 담긴 페이지 가져오기 디폴트값으로 가장 최근 10개의 글 출력
-		cen1 = plist.get(0);
+	
 		pmain.add(cen1);
 		pmain.add(info);
 		pmain.add(page);
