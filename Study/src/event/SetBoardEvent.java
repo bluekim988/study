@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -33,9 +34,8 @@ public class SetBoardEvent implements MouseListener{
 	Board2 b2;
 	JTable t2;
 	
-	public SetBoardEvent(Board2 b) {
-		b2 = b;
-
+	public SetBoardEvent() {
+	
 	}
 
 	@Override
@@ -69,9 +69,9 @@ public class SetBoardEvent implements MouseListener{
 		}
 		
 		// 해당 게시판 프레임 생성
-		b2.boardF = new JFrame();
-		b2.boardF.setBounds(500, 50, 800, 900);
-		b2.boardF.setLayout(null);
+		JFrame boardF = new JFrame();
+		boardF.setBounds(500, 50, 800, 900);
+		boardF.setLayout(null);
 		
 		DefaultTableModel model = new DefaultTableModel(value, nav);
 		t2 = new JTable(model);
@@ -104,13 +104,13 @@ public class SetBoardEvent implements MouseListener{
 		
 		
 	
-		b2.boardF.add(info);
-		b2.boardF.add(jsc);
-		b2.boardF.add(wtbtn);
+		boardF.add(info);
+		boardF.add(jsc);
+		boardF.add(wtbtn);
 		
-		b2.boardF.setVisible(true);
+		boardF.setVisible(true);
 		
-		
+		// 글쓰기 버튼 이벤트
 		wtbtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -126,7 +126,15 @@ public class SetBoardEvent implements MouseListener{
 				JLabel l3 = new JLabel("닉네임");
 				l3.setBounds(20, 120, 50, 50);
 				
-				String[] blist = {"방명록", "자료공유", "대화나눔"};
+				BoardDAO bd = new BoardDAO();
+				TreeSet<BoardDTO> set = bd.selectBoardAll();
+				String[] blist = new String[set.size()]; 
+				Iterator<BoardDTO> itr = set.iterator();
+				for(int i = 0; i < blist.length; i++) {
+					BoardDTO inst = itr.next();
+					blist[i] = inst.getBname();
+				}
+				
 				JComboBox cb = new JComboBox(blist);
 				cb.setBounds(70, 35, 100, 20);	//게시판선택
 				JTextField f1 = new JTextField();
@@ -134,6 +142,7 @@ public class SetBoardEvent implements MouseListener{
 				JTextField f2 = new JTextField();
 				f2.setBounds(70, 130, 200, 30);	//닉네임
 				JTextArea text = new JTextArea();	//본문작성
+				text.setLineWrap(true);
 				text.setBounds(45, 180, 600, 550);
 				
 				JButton submit = new JButton("저장");
@@ -154,7 +163,7 @@ public class SetBoardEvent implements MouseListener{
 				
 				wt.setVisible(true);
 				
-				
+				// 글작성 완료버튼 클릭시 이벤트 발생
 				submit.addActionListener(new ActionListener() {
 					
 					@Override
@@ -186,6 +195,7 @@ public class SetBoardEvent implements MouseListener{
 						
 					}
 				});
+				//글 작성 취소 버튼 클릭시 이벤트 발생
 				close.addActionListener(new ActionListener() {
 					
 					@Override
@@ -220,7 +230,7 @@ public class SetBoardEvent implements MouseListener{
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+				 
 			}
 			
 			@Override
@@ -245,8 +255,11 @@ public class SetBoardEvent implements MouseListener{
 				p1.add(new JLabel("글쓴이 : " + data.getWriter()));
 				p1.add(new JLabel("작성일 : " + data.getCrdate()));
 //				p1.setBorder(new LineBorder(new Color(100, 102, 100)));
-				
-				p2.add(new JLabel(data.getText()));
+				JTextArea area = new JTextArea(data.getText());
+				area.setLineWrap(true);
+				area.setSize(720, 640);
+				JScrollPane scl = new JScrollPane(area);
+				p2.add(scl);
 				p2.setBounds(10, 160, 730, 650);
 //				p2.setBorder(new LineBorder(new Color(100, 102, 100)));
 				

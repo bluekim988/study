@@ -10,25 +10,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.border.LineBorder;
 
 import DAO.BoardDAO;
 import DTO.BoardDTO;
-import event.SetBoardEvent;
+import Panel.LogoImg;
+import Panel.WtPanel;
 
 public class Board2 implements ActionListener, MouseListener {
-	JPanel nav = new JPanel();
+	JPanel nav = new JPanel(); 
 	JPanel list = new JPanel();
 	JFrame home = new JFrame("홈 화면");
 	JButton b1 = new JButton("new 게시판");
 	JButton b2 = new JButton("drop 게시판");
-	public JFrame boardF;
 	public JTable table;
 	
 	ArrayList<JButton> arr = new ArrayList<JButton>();
@@ -36,30 +35,43 @@ public class Board2 implements ActionListener, MouseListener {
 	
 	public Board2() {
 		
+		
 		home.setLayout(null);
-		home.setSize(800, 900);
+		home.setBounds(100, 10, 800, 900);
+//		home.setSize(800, 900);
 		home.setDefaultCloseOperation(home.EXIT_ON_CLOSE);
+		home.getContentPane().setBackground(new Color(49, 124, 245));
 		
 		nav.setBounds(0, 0, 800, 50);
 		nav.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 //		nav.setBorder(new LineBorder(new Color(100, 102, 100)));
-		
+		nav.setBackground(new Color(143, 187, 255));
 		nav.add(b1);
 		nav.add(b2);
 		
 		
 		list.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		list.setBounds(0, 50, 800, 120);
+		list.setBackground(new Color(49, 124, 245));
 //		list.setBorder(new LineBorder(new Color(100, 102, 100)));
 		
 		
 		// 게시판 리스트 호출
 		setBtn();
 		
+		// 메인 로고 호출
+		String url = "D:\\class\\Java\\git\\Study\\study\\Study\\src\\img\\board_logo2.png";
+		LogoImg logo = new LogoImg(new ImageIcon(url).getImage());
+		logo.setLocation(178, 300);
 		
-		
+		//메인 타이틀 호출
+		WtPanel wtPanel = new WtPanel("Welcome");
+		wtPanel.setBounds(240, 170, 300, 100);
+
 		home.add(nav);
 		home.add(list);
+		home.add(logo);
+		home.add(wtPanel);
 		
 		home.setVisible(true);
 		
@@ -77,7 +89,7 @@ public class Board2 implements ActionListener, MouseListener {
 		
 		// 게시판 선택 이벤트 핸들링
 		for(int i=0; i<arr.size(); i++) {
-			arr.get(i).addMouseListener(new SetBoardEvent(this));;
+			arr.get(i).addMouseListener(new List1(arr.get(i).getText()));;
 		}
 		
 	}
